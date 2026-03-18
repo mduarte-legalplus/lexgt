@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const DOC_TYPES = [
+var DOC_TYPES = [
   { value: '', label: 'Todos los tipos' },
   { value: 'sentencia', label: 'Sentencias' },
   { value: 'ley', label: 'Leyes' },
@@ -10,7 +10,7 @@ const DOC_TYPES = [
   { value: 'inconstitucionalidad', label: 'Inconstitucionalidades' },
 ]
 
-const LEGAL_AREAS = [
+var LEGAL_AREAS = [
   { value: '', label: 'Todas las áreas' },
   { value: 'constitucional', label: 'Constitucional' },
   { value: 'penal', label: 'Penal' },
@@ -22,7 +22,7 @@ const LEGAL_AREAS = [
   { value: 'familiar', label: 'Familiar' },
 ]
 
-const SOURCES = [
+var SOURCES = [
   { value: '', label: 'Todas las fuentes' },
   { value: 'cenadoj', label: 'CENADOJ' },
   { value: 'cc', label: 'Corte de Constitucionalidad' },
@@ -79,15 +79,14 @@ export default function SearchBar({ onSearch, isLoading }) {
         </div>
       </form>
 
-      <div style={{ textAlign: 'center', marginTop: '10px' }}>
+      <div className="filter-toggle-row">
         <button
           type="button"
-          className="filter-clear"
+          className={'filter-toggle-btn' + (hasFilters ? ' active' : '')}
           onClick={function () { setShowFilters(!showFilters) }}
-          style={{ fontSize: '13px' }}
         >
-          {showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
-          {hasFilters ? ' (activos)' : ''}
+          {showFilters ? 'Ocultar filtros' : 'Filtros'}
+          {hasFilters ? ' \u2022' : ''}
         </button>
       </div>
 
@@ -97,7 +96,7 @@ export default function SearchBar({ onSearch, isLoading }) {
             className="filter-select"
             value={docType}
             onChange={function (e) { setDocType(e.target.value) }}
-            aria-label="Filtrar por tipo de documento"
+            aria-label="Filtrar por tipo"
           >
             {DOC_TYPES.map(function (opt) {
               return <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -108,7 +107,7 @@ export default function SearchBar({ onSearch, isLoading }) {
             className="filter-select"
             value={legalArea}
             onChange={function (e) { setLegalArea(e.target.value) }}
-            aria-label="Filtrar por área legal"
+            aria-label="Filtrar por área"
           >
             {LEGAL_AREAS.map(function (opt) {
               return <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -132,7 +131,7 @@ export default function SearchBar({ onSearch, isLoading }) {
               className="filter-clear"
               onClick={handleClear}
             >
-              Limpiar filtros
+              Limpiar
             </button>
           )}
         </div>
