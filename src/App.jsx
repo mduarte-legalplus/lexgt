@@ -3,13 +3,68 @@ import { searchDocuments, getDocument, getStats } from './lib/api'
 import './styles/global.css'
 
 /* ===================================
+   SVG ICONS (no emoji dependencies)
+   =================================== */
+function IconScale() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3v18"/>
+      <path d="M3 7l3-3 3 3"/>
+      <path d="M15 7l3-3 3 3"/>
+      <path d="M3 7c0 4 3 5 6 5"/>
+      <path d="M15 12c3 0 6-1 6-5"/>
+      <path d="M3 7l6 0"/>
+      <path d="M15 7l6 0"/>
+    </svg>
+  )
+}
+
+function IconScaleSmall() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3v18"/>
+      <path d="M3 7l3-3 3 3"/>
+      <path d="M15 7l3-3 3 3"/>
+      <path d="M3 7l6 0"/>
+      <path d="M15 7l6 0"/>
+    </svg>
+  )
+}
+
+function IconSearch() {
+  return (
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+  )
+}
+
+function IconFile() {
+  return (
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+  )
+}
+
+function IconArrowUp() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+    </svg>
+  )
+}
+
+function IconArrowLeft() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+    </svg>
+  )
+}
+
+/* ===================================
    SIMPLE MARKDOWN RENDERER
    =================================== */
 function renderMarkdown(text) {
   if (!text) return ''
-  // Bold
   var result = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-  // Line breaks
   result = result.replace(/\n/g, '<br/>')
   return result
 }
@@ -22,8 +77,10 @@ function Sidebar({ currentView, onNavigate, stats }) {
     <div className="sidebar">
       <div className="sidebar-header">
         <div className="sidebar-logo">
-          <div className="logo-icon">L</div>
-          <span>Lex<span className="logo-gt">GT</span></span>
+          <div className="logo-mark">
+            <IconScale />
+          </div>
+          <div className="logo-text">Lex<span className="gt">GT</span></div>
         </div>
       </div>
 
@@ -33,27 +90,27 @@ function Sidebar({ currentView, onNavigate, stats }) {
           className={'nav-item' + (currentView === 'chat' ? ' active' : '')}
           onClick={function () { onNavigate('chat') }}
         >
-          <span className="nav-icon">{'\u2696'}</span>
+          <span className="nav-icon"><IconScaleSmall /></span>
           Asistente Legal
         </button>
         <button
           className={'nav-item' + (currentView === 'search' ? ' active' : '')}
           onClick={function () { onNavigate('search') }}
         >
-          <span className="nav-icon">{'\uD83D\uDD0D'}</span>
+          <span className="nav-icon"><IconSearch /></span>
           Buscar Documentos
         </button>
 
         <div className="nav-section-label">Base de Datos</div>
         <div className="nav-item" style={{ cursor: 'default' }}>
-          <span className="nav-icon">{'\uD83D\uDCC4'}</span>
+          <span className="nav-icon"><IconFile /></span>
           <span>{stats.total} documentos</span>
         </div>
       </div>
 
       <div className="sidebar-footer">
-        <div className="nav-item" style={{ cursor: 'default', fontSize: '11px', color: 'var(--text-muted)' }}>
-          No constituye asesor\u00eda legal
+        <div style={{ fontSize: '11px', color: 'var(--text-muted)', padding: '8px 12px' }}>
+          No constituye asesoria legal
         </div>
       </div>
     </div>
@@ -124,7 +181,7 @@ function ChatView() {
       .catch(function () {
         setMessages(newMessages.concat([{
           role: 'assistant',
-          content: 'No se pudo conectar con el asistente. Verifica tu conexi\u00f3n.'
+          content: 'No se pudo conectar con el asistente. Verifica tu conexion.'
         }]))
         setIsLoading(false)
       })
@@ -143,7 +200,9 @@ function ChatView() {
     <div className="chat-view">
       {!hasMessages && (
         <div className="chat-welcome">
-          <div className="chat-welcome-icon">{'\u2696'}</div>
+          <div className="chat-welcome-logo">
+            <IconScale />
+          </div>
           <h1>Asistente Legal de Guatemala</h1>
           <p>Pregunta sobre leyes, jurisprudencia o procedimientos legales.</p>
           <div className="welcome-suggestions">
@@ -167,12 +226,12 @@ function ChatView() {
           {messages.map(function (msg, i) {
             var isUser = msg.role === 'user'
             return (
-              <div key={i} className={'msg ' + (isUser ? 'msg-user' : 'msg-assistant')}>
-                <div className="msg-avatar">
-                  {isUser ? 'M' : '\u2696'}
+              <div key={i} className="msg">
+                <div className={'msg-avatar ' + (isUser ? 'user-avatar' : 'ai-avatar')}>
+                  {isUser ? 'M' : <IconScaleSmall />}
                 </div>
                 <div className="msg-content">
-                  <div className="msg-sender">{isUser ? 'T\u00fa' : 'LexGT'}</div>
+                  <div className="msg-sender">{isUser ? 'Tu' : 'LexGT'}</div>
                   <div
                     className="msg-text"
                     dangerouslySetInnerHTML={{ __html: isUser ? msg.content : renderMarkdown(msg.content) }}
@@ -184,7 +243,9 @@ function ChatView() {
 
           {isLoading && (
             <div className="msg-thinking">
-              <div className="msg-avatar">{'\u2696'}</div>
+              <div className="msg-avatar ai-avatar">
+                <IconScaleSmall />
+              </div>
               <div className="thinking-dots">
                 <span></span><span></span><span></span>
               </div>
@@ -211,11 +272,11 @@ function ChatView() {
             onClick={function () { handleSend() }}
             disabled={isLoading || !input.trim()}
           >
-            {'\u2191'}
+            <IconArrowUp />
           </button>
         </div>
         <div className="chat-disclaimer">
-          Las respuestas son informativas. No constituyen asesor\u00eda legal profesional.
+          Las respuestas son informativas. No constituyen asesoria legal profesional.
         </div>
       </div>
     </div>
@@ -234,7 +295,7 @@ var DOC_TYPES = [
 ]
 
 var LEGAL_AREAS = [
-  { value: '', label: 'Todas las \u00e1reas' },
+  { value: '', label: 'Todas las areas' },
   { value: 'constitucional', label: 'Constitucional' },
   { value: 'penal', label: 'Penal' },
   { value: 'civil', label: 'Civil' },
@@ -308,15 +369,12 @@ function SearchView({ onViewDoc }) {
 
       <div className="search-results">
         {isLoading && (
-          <div className="loading-state">
-            <p>Buscando documentos...</p>
-          </div>
+          <div className="loading-state"><p>Buscando documentos...</p></div>
         )}
 
         {!isLoading && hasSearched && results.length === 0 && (
           <div className="empty-search">
-            <div className="empty-icon">{'\uD83D\uDD0D'}</div>
-            <p>No se encontraron resultados. Intenta con otros t\u00e9rminos.</p>
+            <p>No se encontraron resultados. Intenta con otros terminos.</p>
           </div>
         )}
 
@@ -327,15 +385,9 @@ function SearchView({ onViewDoc }) {
             </div>
             {results.map(function (r) {
               return (
-                <div
-                  key={r.id}
-                  className="result-item"
-                  onClick={function () { onViewDoc(r.id) }}
-                >
+                <div key={r.id} className="result-item" onClick={function () { onViewDoc(r.id) }}>
                   <div className="result-item-header">
-                    <span className={'result-type-badge type-' + (r.doc_type || 'otro')}>
-                      {r.doc_type}
-                    </span>
+                    <span className={'result-type-badge type-' + (r.doc_type || 'otro')}>{r.doc_type}</span>
                     <span className="result-item-title">{r.title}</span>
                   </div>
                   <div className="result-item-meta">
@@ -352,8 +404,7 @@ function SearchView({ onViewDoc }) {
 
         {!hasSearched && (
           <div className="empty-search">
-            <div className="empty-icon">{'\u2696'}</div>
-            <p>Escribe un t\u00e9rmino para buscar en la base de datos legal.</p>
+            <p>Escribe un termino para buscar en la base de datos legal.</p>
           </div>
         )}
       </div>
@@ -378,7 +429,6 @@ function DocumentView({ docId, onBack }) {
   if (isLoading) {
     return <div className="doc-view"><div className="loading-state">Cargando documento...</div></div>
   }
-
   if (!doc) {
     return <div className="doc-view"><p>No se pudo cargar el documento.</p></div>
   }
@@ -394,32 +444,22 @@ function DocumentView({ docId, onBack }) {
   return (
     <div className="doc-view">
       <button className="doc-back" onClick={onBack}>
-        {'\u2190'} Volver a resultados
+        <IconArrowLeft /> Volver a resultados
       </button>
       <div className="doc-card">
         <h1 className="doc-title">{doc.title}</h1>
         <div className="doc-meta">
-          <span className={'result-type-badge type-' + (doc.doc_type || 'otro')}>
-            {doc.doc_type}
-          </span>
-          {doc.issuing_body && (
-            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{doc.issuing_body}</span>
-          )}
-          {doc.document_date && (
-            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{formatDate(doc.document_date)}</span>
-          )}
-          {doc.case_number && (
-            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Exp. {doc.case_number}</span>
-          )}
+          <span className={'result-type-badge type-' + (doc.doc_type || 'otro')}>{doc.doc_type}</span>
+          {doc.issuing_body && <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{doc.issuing_body}</span>}
+          {doc.document_date && <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{formatDate(doc.document_date)}</span>}
+          {doc.case_number && <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Exp. {doc.case_number}</span>}
         </div>
         {doc.summary && <div className="doc-summary"><strong>Resumen: </strong>{doc.summary}</div>}
         <div className="doc-body">{doc.body}</div>
         {doc.source_url && (
           <div className="doc-source">
             <strong>Fuente: </strong>
-            <a href={doc.source_url} target="_blank" rel="noopener noreferrer">
-              Ver documento original ({doc.source})
-            </a>
+            <a href={doc.source_url} target="_blank" rel="noopener noreferrer">Ver documento original ({doc.source})</a>
           </div>
         )}
       </div>
@@ -434,7 +474,6 @@ export default function App() {
   var [currentView, setCurrentView] = useState('chat')
   var [currentDoc, setCurrentDoc] = useState(null)
   var [stats, setStats] = useState({ total: 0, byType: {} })
-  var [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(function () {
     getStats()
@@ -445,7 +484,6 @@ export default function App() {
   function handleNavigate(view) {
     setCurrentView(view)
     setCurrentDoc(null)
-    setMobileMenuOpen(false)
   }
 
   function handleViewDoc(id) {
@@ -460,34 +498,17 @@ export default function App() {
 
   return (
     <div className="app">
-      <Sidebar
-        currentView={currentView}
-        onNavigate={handleNavigate}
-        stats={stats}
-      />
+      <Sidebar currentView={currentView} onNavigate={handleNavigate} stats={stats} />
 
       <div className="main">
-        {/* Mobile header */}
         <div className="mobile-header">
           <div className="sidebar-logo">
-            <div className="logo-icon">L</div>
-            <span>Lex<span className="logo-gt">GT</span></span>
+            <div className="logo-mark"><IconScale /></div>
+            <div className="logo-text">Lex<span className="gt">GT</span></div>
           </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button
-              className="nav-item"
-              style={{ padding: '6px 10px', width: 'auto' }}
-              onClick={function () { handleNavigate('chat') }}
-            >
-              {'\u2696'}
-            </button>
-            <button
-              className="nav-item"
-              style={{ padding: '6px 10px', width: 'auto' }}
-              onClick={function () { handleNavigate('search') }}
-            >
-              {'\uD83D\uDD0D'}
-            </button>
+          <div style={{ display: 'flex', gap: '4px' }}>
+            <button className="nav-item" style={{ padding: '6px 10px', width: 'auto' }} onClick={function () { handleNavigate('chat') }}>Chat</button>
+            <button className="nav-item" style={{ padding: '6px 10px', width: 'auto' }} onClick={function () { handleNavigate('search') }}>Buscar</button>
           </div>
         </div>
 
